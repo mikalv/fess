@@ -97,7 +97,7 @@ export default class {
     }
 
     var paginationInfo = (function(){
-      var allPageNum = Math.floor(recordCount / pageSize) + 1;
+      var allPageNum = Math.floor((recordCount - 1) / pageSize) + 1;
       var info = {};
       info.current = currentPage;
       info.min = (currentPage - 5) > 0 ? currentPage - 5 : 1;
