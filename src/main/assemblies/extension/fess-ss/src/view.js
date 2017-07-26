@@ -1,5 +1,6 @@
 import FessJQuery from 'jquery';
 import formTemplate from '!handlebars-loader!./templates/fess-form.hbs';
+import formOnlyTemplate from '!handlebars-loader!./templates/fess-form-only.hbs';
 import resultTemplate from '!handlebars-loader!./templates/fess-result.hbs';
 import noResultTemplate from '!handlebars-loader!./templates/fess-no-result.hbs';
 
@@ -31,7 +32,7 @@ export default class {
       $fessFormWrapper.addClass('fessWrapper');
 
       var $fessFormOnly = FessJQuery('<div/>');
-      $fessFormOnly.addClass('fessForm');
+      $fessFormOnly.addClass('fessFormOnly');
       $fessFormWrapper.append($fessFormOnly);
 
       FessJQuery('fess\\:search-form-only').replaceWith($fessFormWrapper);
@@ -50,10 +51,18 @@ export default class {
     }
   }
 
-  renderForm() {
+  renderForm(searchPagePath) {
     var $fessForm = FessJQuery('.fessWrapper .fessForm');
-    var html = formTemplate(this.css);
-    $fessForm.html(this.FessMessages.render(html, {}));
+    var $fessFormOnly = FessJQuery('.fessWrapper .fessFormOnly');
+    if ($fessForm.length > 0) {
+      var html = formTemplate();
+      $fessForm.html(this.FessMessages.render(html, {}));
+    }
+    if ($fessFormOnly.length > 0) {
+      var html = formOnlyTemplate();
+      $fessFormOnly.html(this.FessMessages.render(html, {}));
+      FessJQuery('.fessWrapper .fessFormOnly form').attr('action', searchPagePath);
+    }
   }
 
   renderResult(contextPath, response, params) {
@@ -63,7 +72,11 @@ export default class {
     $fessResult.html(this.FessMessages.render(html, response));
     var $pagination = this._createPagination(response.record_count, response.page_size, response.page_number, params);
     FessJQuery('.fessWrapper .paginationNav').append($pagination);
-    FessJQuery('.fessWrapper select.sort').val(params.sort);
+    if (FessJQuery('.fessWrapper .fessForm').length > 0) {
+      FessJQuery('.fessWrapper select.sort').val(params.sort);
+    } else {
+      FessJQuery('.fessWrapper .fessResult table .order').css('display', 'none');
+    }
     this._loadThumbnail(contextPath);
   }
 
@@ -150,14 +163,14 @@ export default class {
   					loadImage(img, url, --limit);
   				}, $cls.IMG_LOADING_DELAY);
   			} else {
-  				FessJQuery(img).attr('src', contextPath + "/images/noimage.png");
+  				FessJQuery(img).parent().css('display', 'none');
   			}
   			imgData = null;
   		};
   		imgData.src = url;
   	};
 
-  	FessJQuery('img.thumbnail').each(function() {
+  	FessJQuery('.fessWrapper .fessResult img.thumbnail').each(function() {
   		FessJQuery(this).css('background-image', 'url("' + contextPath + '/images/loading.gif")');
   		loadImage(this, FessJQuery(this).attr('data-src'), $cls.IMG_LOADING_MAX);
   	});
