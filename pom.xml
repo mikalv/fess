@@ -104,26 +104,20 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>build-jdk9</id>
+			<activation>
+				<jdk>9</jdk>
+			</activation>
+			<properties>
+				<test.include.path>**/*Test.java</test.include.path>
+				<test.command.args>--add-modules java.xml.bind</test.command.args>
+			</properties>
+		</profile>
+		<profile>
 			<id>integrationTests</id>
 			<properties>
 				<test.include.path>**/*Tests.java</test.include.path>
 			</properties>
-		</profile>
-		<profile>
-			<id>jdk9-build</id>
-			<activation>
-				<jdk>9</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<argLine>--add-modules java.xml.bind</argLine>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 	<build>
@@ -201,6 +195,9 @@
 					<includes>
 						<include>${test.include.path}</include>
 					</includes>
+					<configuration>
+						<argLine>${test.command.args}</argLine>
+					</configuration>
 				</configuration>
 				<dependencies>
 					<dependency>
