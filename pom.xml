@@ -109,6 +109,22 @@
 				<test.include.path>**/*Tests.java</test.include.path>
 			</properties>
 		</profile>
+		<profile>
+			<id>jdk9-build</id>
+			<activation>
+				<jdk>9</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<argLine>--add-modules java.xml.bind</argLine>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 	<build>
 		<finalName>fess</finalName>
